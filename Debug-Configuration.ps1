@@ -42,7 +42,7 @@ $ComputerNames | ForEach-Object { Start-Process -FilePath "vmconnect.exe" -Argum
 # Start-Process -FilePath "vmconnect.exe" -ArgumentList @("localhost", "WEB01")
 #endregion Connect VM
 
-# Complete Setup (~5 Minutes)
+# Complete Setup (~4 Minutes)
 
 #region Checkpoint VM
 $ComputerNames | Checkpoint-VM -Verbose
@@ -58,7 +58,7 @@ $ComputerNames | .\Rename-Guest.ps1 -Credential $Credential -Verbose
 # .\Rename-Guest.ps1 -ComputerName "WEB01" -Credential $Credential -Verbose
 #endregion Rename Guest
 
-#region Install Guest Dependencies
+#region Install Guest Dependencies (~3.5 Minutes)
 $ComputerNames | .\Install-GuestDependencies.ps1 -Credential $Credential -PfxPath "$env:TEMP\DscPrivateKey.pfx" -PfxPassword $Credential.Password -Verbose
 # .\Install-GuestDependencies.ps1 -ComputerName "DC01" -Credential $Credential -PfxPath "$env:TEMP\DscPrivateKey.pfx" -PfxPassword $Credential.Password -Verbose
 # .\Install-GuestDependencies.ps1 -ComputerName "SQL01" -Credential $Credential -PfxPath "$env:TEMP\DscPrivateKey.pfx" -PfxPassword $Credential.Password -Verbose
