@@ -43,6 +43,7 @@ process {
         Install-Module -Name "ComputerManagementDsc" -Repository "PSGallery" -Force
         Install-Module -Name "NetworkingDsc" -Repository "PSGallery" -Force
         Install-Module -Name "PSDscResources" -Repository "PSGallery" -Force
+        Install-Module -Name "PSWindowsUpdate" -Repository "PSGallery" -Force
         Install-Module -Name "SqlServerDsc" -Repository "PSGallery" -Force
     }
 

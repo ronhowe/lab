@@ -58,6 +58,11 @@ RemoteDesktop-UserMode-In-TCP
             SQLSysAdminAccounts = @("Administrators")
         };
         @{
+            NodeName       = "USER01"
+            Sku            = "Desktop"
+            TestFolderPath = "C:\test"
+        };
+        @{
             NodeName = "WEB01"
             Sku      = "Core"
         };

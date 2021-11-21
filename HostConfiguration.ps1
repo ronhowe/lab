@@ -14,7 +14,7 @@ Configuration HostConfiguration {
 
     Node "localhost" {
         #region All Nodes
-        @("DC01", "SQL01", "WEB01") | ForEach-Object {
+        @("DC01", "SQL01", "USER01", "WEB01") | ForEach-Object {
             xVHD "xVHD$_" {
                 Ensure           = $Ensure
                 Generation       = "VHDX"
@@ -35,12 +35,18 @@ Configuration HostConfiguration {
                 VhdPath                     = Join-Path -Path $Node.VirtualHardDisksPath -ChildPath "$_.vhdx"
             }
             if ($Ensure -eq "Present") {
+                if ($_ -eq "USER01") {
+                    $WindowsIsoPath = $Node.WindowsClientIsoPath
+                }
+                else {
+                    $WindowsIsoPath = $Node.WindowsServerIsoPath
+                }
                 xVMDvdDrive "xVMDvdDriveWindows$_" {
                     ControllerLocation = 0
                     ControllerNumber   = 1
                     DependsOn          = "[xVMHyperV]xVMHyperV$_"
                     Ensure             = $Ensure
-                    Path               = $Node.WindowsServerIsoPath
+                    Path               = $WindowsIsoPath
                     VMName             = $_
                 }
                 if ($_ -eq "SQL01") {

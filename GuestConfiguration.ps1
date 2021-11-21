@@ -50,6 +50,9 @@ Configuration GuestConfiguration {
             "SQL01" {
                 20
             }
+            "USER01" {
+                40
+            }
             "WEB01" {
                 30
             }
@@ -159,7 +162,7 @@ Configuration GuestConfiguration {
     }
     #endregion All Nodes
 
-    #region Domain Server
+    #region DC01
     Node "DC01" {
         WindowsFeature "InstallActiveDirectoryServices" {
             Ensure = "Present"
@@ -222,9 +225,9 @@ Configuration GuestConfiguration {
         # }
         #endregion Active Directory Certificate Services
     }
-    #endregion Domain Server
+    #endregion DC01
 
-    #region SQL Server
+    #region SQL01
     Node "SQL01" {
         # https://github.com/dsccommunity/SqlServerDsc/wiki/SqlSetup
         SqlSetup "InstallSqlServer" {
@@ -248,14 +251,24 @@ Configuration GuestConfiguration {
             SourcePath   = $Node.SourcePath
         }
     }
-    #endregion SQL Server
+    #endregion SQL01
     
-    #region Web Server
+    #region USER01
+    Node "USER01" {
+        File "CreateTestFolder" {
+            DestinationPath = $Node.TestFolderPath
+            Ensure          = "Present"
+            Type            = "Directory"
+        }
+    }
+    #endregion USER01
+
+    #region WEB01
     Node "WEB01" {
         WindowsFeature "InstallWebServer" {
             Ensure = "Present"
             Name   = "Web-Server" 
         }
     }
-    #endregion Web Server
+    #endregion WEB01
 }
