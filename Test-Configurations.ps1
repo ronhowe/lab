@@ -5,6 +5,7 @@
 $TestCases = @(
     @{ ComputerName = "DC01" }
     @{ ComputerName = "SQL01" }
+    @{ ComputerName = "USER01" }
     @{ ComputerName = "WEB01" }
 )
 
