@@ -1,18 +1,19 @@
 @{
     AllNodes = @(
         @{
-            ActionAfterReboot  = "ContinueConfiguration"
-            CertificateFile    = "$env:TEMP\DscPublicKey.cer"
-            CertificateId      = "788B0ECB7F170CB9D7D8D6FD152AB4DD244E1D59"
-            ConfigurationMode  = "ApplyAndAutoCorrect"
-            DomainName         = "LAB.LOCAL"
-            NodeName           = "*"
-            RebootNodeIfNeeded = $true
-            RestartCount       = 3
-            Subnet             = 20
-            TimeZone           = "Eastern Standard Time"
-            WaitTimeout        = 300
-            FirewallRules      = @"
+            ActionAfterReboot    = "ContinueConfiguration"
+            PSDscAllowDomainUser = $true
+            CertificateFile      = "$env:TEMP\DscPublicKey.cer"
+            CertificateId        = "3825E32B11042D54CDC15FC44CF7B5F3AC2ACC30"
+            ConfigurationMode    = "ApplyAndAutoCorrect"
+            DomainName           = "LAB.LOCAL"
+            NodeName             = "*"
+            RebootNodeIfNeeded   = $true
+            RestartCount         = 3
+            Subnet               = 20
+            TimeZone             = "Eastern Standard Time"
+            WaitTimeout          = 300
+            FirewallRules        = @"
 Name
 FPS-ICMP4-ERQ-In
 FPS-ICMP4-ERQ-Out

@@ -1,12 +1,5 @@
 #requires -PSEdition Desktop
 
-#region Online Documentation
-# https://docs.microsoft.com/en-us/powershell/scripting/dsc/managing-nodes/metaConfig?view=powershell-7.2
-# https://github.com/dsccommunity/ActiveDirectoryDsc/wiki
-# https://github.com/dsccommunity/NetworkingDsc/wiki
-# https://github.com/dsccommunity/SqlServerDsc/wiki
-#endregion Online Documentation
-
 Configuration GuestConfiguration {
     param(
         [Parameter(Mandatory = $true)]
@@ -15,14 +8,12 @@ Configuration GuestConfiguration {
         $Credential
     )
     
-    #region DSC Resources
     Import-DscResource -ModuleName "ActiveDirectoryCSDsc"
     Import-DscResource -ModuleName "ActiveDirectoryDsc"
     Import-DscResource -ModuleName "ComputerManagementDsc"
     Import-DscResource -ModuleName "NetworkingDsc"
     Import-DscResource -ModuleName "PSDscResources"
     Import-DscResource -ModuleName "SqlServerDsc"
-    #endregion DSC Resources
 
     #region Helpers
     function Get-NodeGatewayIpAddress {
@@ -65,11 +56,10 @@ Configuration GuestConfiguration {
             return $IpAddress -join "."
         }
     }
-    
-    $DomainCredential = New-Object System.Management.Automation.PSCredential ($("{0}\{1}" -f $Node.DomainName, $Credential.UserName), $Credential.Password)
     #endregion Helpers
 
-    #region All Nodes
+    $DomainCredential = New-Object System.Management.Automation.PSCredential ($("{0}\{1}" -f $Node.DomainName, $Credential.UserName), $Credential.Password)
+
     Node $AllNodes.NodeName {
         LocalConfigurationManager {
             ActionAfterReboot  = $Node.ActionAfterReboot
@@ -160,9 +150,6 @@ Configuration GuestConfiguration {
             ValueName = "fdenyTSConnections"
         }
     }
-    #endregion All Nodes
-
-    #region DC01
     Node "DC01" {
         WindowsFeature "InstallActiveDirectoryServices" {
             Ensure = "Present"
@@ -204,32 +191,8 @@ Configuration GuestConfiguration {
             FeatureName                       = "Recycle Bin Feature"
             ForestFQDN                        = $Node.DomainName
         }
-        #region Active Directory Certificate Services
-        # WindowsFeature "InstallActiveDirectoryCertificateServices" {
-        #     Name      = @("AD-Certificate", "ADCS-Cert-Authority", "ADCS-Web-Enrollment", "ADCS-Enroll-Web-Pol", "ADCS-Enroll-Web-Svc", "RSAT-ADCS", "RSAT-ADCS-Mgmt")
-        #     Ensure    = "Present"
-        #     DependsOn = "[WaitForADDomain]WaitForActiveDirectory"
-        # }
-        # AdcsCertificationAuthority "ConfigureADCSCertificationAuthority" {
-        #     IsSingleInstance = "Yes"
-        #     Credential       = $Credential
-        #     CAType           = "EnterpriseRootCA"
-        #     Ensure           = "Present"
-        #     DependsOn        = "[WindowsFeatureSet]InstallActiveDirectoryCertificateServices"
-        # }
-        # AdcsWebEnrollment "ConfigureADCSWebEnrollment" {
-        #     IsSingleInstance = "Yes"
-        #     Credential       = $Credential
-        #     Ensure           = "Present"
-        #     DependsOn        = "[AdcsCertificationAuthority]ConfigureADCSCertificationAuthority"
-        # }
-        #endregion Active Directory Certificate Services
     }
-    #endregion DC01
-
-    #region SQL01
     Node "SQL01" {
-        # https://github.com/dsccommunity/SqlServerDsc/wiki/SqlSetup
         SqlSetup "InstallSqlServer" {
             DependsOn            = "[Computer]JoinDomain"
             Features             = $Node.Features
@@ -251,9 +214,6 @@ Configuration GuestConfiguration {
             SourcePath   = $Node.SourcePath
         }
     }
-    #endregion SQL01
-    
-    #region USER01
     Node "USER01" {
         File "CreateTestFolder" {
             DestinationPath = $Node.TestFolderPath
@@ -261,14 +221,10 @@ Configuration GuestConfiguration {
             Type            = "Directory"
         }
     }
-    #endregion USER01
-
-    #region WEB01
     Node "WEB01" {
         WindowsFeature "InstallWebServer" {
             Ensure = "Present"
             Name   = "Web-Server" 
         }
     }
-    #endregion WEB01
 }

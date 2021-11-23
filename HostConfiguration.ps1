@@ -7,13 +7,11 @@ Configuration HostConfiguration {
         [string]
         $Ensure
     )
-    #region DSC Resources
+
     Import-DscResource -ModuleName "PSDscResources"
     Import-DscResource -ModuleName "xHyper-V"
-    #endregion DSC Resources
 
     Node "localhost" {
-        #region All Nodes
         @("DC01", "SQL01", "USER01", "WEB01") | ForEach-Object {
             xVHD "xVHD$_" {
                 Ensure           = $Ensure
@@ -61,6 +59,5 @@ Configuration HostConfiguration {
                 }
             }
         }
-        #endregion All Nodes
     }
 }

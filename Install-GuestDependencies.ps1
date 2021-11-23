@@ -23,32 +23,54 @@ param (
 begin {
 }
 process {
-    Write-Verbose "Getting PSSession"
-    $Session = New-PSSession -ComputerName $ComputerName -Credential $Credential
+    foreach ($Computer in $ComputerName) {
+        Write-Output "Installing Guest Dependencies on $Computer"
 
-    Write-Verbose "Copying PFX"
-    Copy-Item -Path $PfxPath -Destination "C:\DscPrivateKey.pfx" -ToSession $Session
+        Write-Output "Getting PSSession to $Computer"
+        $Session = New-PSSession -ComputerName $Computer -Credential $Credential
 
-    Write-Verbose "Importing PFX"
-    Invoke-Command -Session $Session -ScriptBlock {
-        Import-PfxCertificate -FilePath "C:\DscPrivateKey.pfx" -CertStoreLocation "Cert:\LocalMachine\My" -Password $using:PfxPassword
+        Write-Output "Copying PFX to $Computer"
+        Copy-Item -Path $PfxPath -Destination "C:\DscPrivateKey.pfx" -ToSession $Session
+
+        Write-Output "Importing PFX on $Computer"
+        Invoke-Command -Session $Session -ScriptBlock {
+            $ProgressPreference = "SilentlyContinue"
+            Import-PfxCertificate -FilePath "C:\DscPrivateKey.pfx" -CertStoreLocation "Cert:\LocalMachine\My" -Password $using:PfxPassword | Out-Null
+        }
+
+        Write-Output "Installing Package Providers on $Computer"
+        Invoke-Command -Session $Session -ScriptBlock {
+            $ProgressPreference = "SilentlyContinue"
+            $PackageProviders = @(
+                "Nuget"
+            )
+            foreach ($PackageProvider in $PackageProviders) {
+                Write-Output "Installing Package Provider $PackageProvider"
+                Install-PackageProvider -Name $PackageProvider -Force | Out-Null
+            }
+        }
+
+        Write-Output "Installing Modules on $Computer"
+        Invoke-Command -Session $Session -ScriptBlock {
+            $ProgressPreference = "SilentlyContinue"
+            $Modules = @(
+                "ActiveDirectoryCSDsc",
+                "ActiveDirectoryDsc",
+                "ComputerManagementDsc",
+                "NetworkingDsc",
+                "PSDscResources",
+                "PSWindowsUpdate",
+                "SqlServerDsc"
+            )
+            foreach ($Module in $Modules) {
+                Write-Output "Installing Module $Module"
+                Install-Module -Name $Module -Scope AllUsers -Repository "PSGallery" -Force
+            }
+        }
+
+        Write-Output "Removing PSSession to $Computer"
+        $Session | Remove-PSSession
     }
-
-    Write-Verbose "Installing Modules"
-    Invoke-Command -ComputerName $ComputerName -Credential $Credential -ScriptBlock {
-        $ProgressPreference = "SilentlyContinue"
-        Install-PackageProvider -Name "Nuget" -Force -Verbose | Out-Null
-        Install-Module -Name "ActiveDirectoryCSDsc" -Repository "PSGallery" -Force
-        Install-Module -Name "ActiveDirectoryDsc" -Repository "PSGallery" -Force
-        Install-Module -Name "ComputerManagementDsc" -Repository "PSGallery" -Force
-        Install-Module -Name "NetworkingDsc" -Repository "PSGallery" -Force
-        Install-Module -Name "PSDscResources" -Repository "PSGallery" -Force
-        Install-Module -Name "PSWindowsUpdate" -Repository "PSGallery" -Force
-        Install-Module -Name "SqlServerDsc" -Repository "PSGallery" -Force
-    }
-
-    Write-Verbose "Removing PSSession"
-    $Session | Remove-PSSession
 }
 end {
 }

@@ -1,9 +1,12 @@
+#requires -RunAsAdministrator
+#requires -PSEdition Desktop
+
 [CmdletBinding()]
 param (
     [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
     [ValidateNotNullorEmpty()]
     [string]
-    $VMName,
+    $ComputerName,
 
     [Parameter(Mandatory = $true)]
     [ValidateNotNullorEmpty()]
@@ -13,11 +16,17 @@ param (
 begin {
 }
 process {
-    Write-Verbose "Renaming Computer"
-    Invoke-Command -VMName $VMName -Credential $Credential -ScriptBlock { Rename-Computer -NewName $using:VMName }
+    foreach ($Computer in $ComputerName) {
+        Write-Output "Renaming Guest $Computer"
+        $ScriptBlock = {
+            $ProgressPreference = "SilentlyContinue"
+            Rename-Computer -NewName $using:Computer -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+        }
+        Invoke-Command -VMName $Computer -Credential $Credential -ScriptBlock $ScriptBlock
 
-    Write-Verbose "Rebooting Computer"
-    Restart-VM -Name $VMName -Wait -Force
+        Write-Output "Rebooting Guest $Computer"
+        Restart-VM -Name $Computer -Wait -Force
+    }
 }
 end {
 }

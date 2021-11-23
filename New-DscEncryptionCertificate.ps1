@@ -1,14 +1,25 @@
 #requires -RunAsAdministrator
-#requires -PSEdition Core
+#requires -PSEdition Desktop
 
-# https://docs.microsoft.com/en-us/powershell/scripting/dsc/pull-server/securemof?view=powershell-7.2#certificate-creation
+[CmdletBinding()]
+param (
+    [Parameter(Mandatory = $true)]
+    [ValidateNotNullorEmpty()]
+    [securestring]
+    $Password
+)
 
+Write-Verbose "Creating Self-Signed Certificate"
 $Certificate = New-SelfSignedCertificate -Type DocumentEncryptionCertLegacyCsp -DnsName "DscEncryptionCert" -HashAlgorithm SHA256
 
-$Certificate | Export-PfxCertificate -FilePath "$env:TEMP\DscPrivateKey.pfx" -Password $MyConfiguration.DscEncryptionCertPfxPassword -Force
+Write-Verbose "Creating Self-Signed Certificate"
+$Certificate | Export-PfxCertificate -FilePath "$env:TEMP\DscPrivateKey.pfx" -Password $Password -Force
 
+Write-Verbose "Creating Self-Signed Certificate"
 $Certificate | Export-Certificate -FilePath "$env:TEMP\DscPublicKey.cer" -Force
 
+Write-Verbose "Creating Self-Signed Certificate"
 $Certificate | Remove-Item -Force
 
+Write-Verbose "Creating Self-Signed Certificate"
 Import-Certificate -FilePath "$env:TEMP\DscPublicKey.cer" -CertStoreLocation "Cert:\LocalMachine\My"
