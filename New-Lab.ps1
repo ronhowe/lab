@@ -1,8 +1,6 @@
 #requires -RunAsAdministrator
 #requires -PSEdition Desktop
 
-$ProgressPreference = "SilentlyContinue"
-
 Set-Location -Path $PSScriptRoot
 
 $AdministratorCredential = Get-Credential -Message "Enter Administrator Credential" -Username "Administrator"

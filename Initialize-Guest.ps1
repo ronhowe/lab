@@ -32,8 +32,6 @@ process {
         begin {
         }
         process {
-            $ProgressPreference = "SilentlyContinue"
-
             Write-Output "Enabling Administrator Account on $env:COMPUTERNAME"
             Enable-LocalUser -Name "Administrator"
 

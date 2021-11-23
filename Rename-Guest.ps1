@@ -19,7 +19,6 @@ process {
     foreach ($Computer in $ComputerName) {
         Write-Output "Renaming Guest $Computer"
         $ScriptBlock = {
-            $ProgressPreference = "SilentlyContinue"
             Rename-Computer -NewName $using:Computer -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
         }
         Invoke-Command -VMName $Computer -Credential $Credential -ScriptBlock $ScriptBlock

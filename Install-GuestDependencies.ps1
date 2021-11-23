@@ -34,14 +34,12 @@ process {
 
         Write-Output "Importing PFX on $Computer"
         $ScriptBlock = {
-            $ProgressPreference = "SilentlyContinue"
             Import-PfxCertificate -FilePath "C:\DscPrivateKey.pfx" -CertStoreLocation "Cert:\LocalMachine\My" -Password $using:PfxPassword | Out-Null
         }
         Invoke-Command -Session $Session -ScriptBlock $ScriptBlock
 
         Write-Output "Installing Package Providers on $Computer"
         $ScriptBlock = {
-            $ProgressPreference = "SilentlyContinue"
             $PackageProviders = @(
                 "Nuget"
             )
@@ -54,7 +52,6 @@ process {
 
         Write-Output "Installing Modules on $Computer"
         $ScriptBlock = {
-            $ProgressPreference = "SilentlyContinue"
             $Modules = @(
                 "ActiveDirectoryCSDsc",
                 "ActiveDirectoryDsc",

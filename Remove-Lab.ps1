@@ -1,8 +1,6 @@
 #requires -RunAsAdministrator
 #requires -PSEdition Desktop
 
-$ProgressPreference = "SilentlyContinue"
-
 Set-Location -Path $PSScriptRoot
 
 $ComputerNames = @("DC01", "SQL01", "USER01", "WEB01")
