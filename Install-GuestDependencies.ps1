@@ -33,25 +33,27 @@ process {
         Copy-Item -Path $PfxPath -Destination "C:\DscPrivateKey.pfx" -ToSession $Session
 
         Write-Output "Importing PFX on $Computer"
-        Invoke-Command -Session $Session -ScriptBlock {
+        $ScriptBlock = {
             $ProgressPreference = "SilentlyContinue"
             Import-PfxCertificate -FilePath "C:\DscPrivateKey.pfx" -CertStoreLocation "Cert:\LocalMachine\My" -Password $using:PfxPassword | Out-Null
         }
+        Invoke-Command -Session $Session -ScriptBlock $ScriptBlock
 
         Write-Output "Installing Package Providers on $Computer"
-        Invoke-Command -Session $Session -ScriptBlock {
+        $ScriptBlock = {
             $ProgressPreference = "SilentlyContinue"
             $PackageProviders = @(
                 "Nuget"
             )
             foreach ($PackageProvider in $PackageProviders) {
-                Write-Output "Installing Package Provider $PackageProvider"
+                Write-Output "Installing Package Provider $PackageProvider on $env:COMPUTERNAME"
                 Install-PackageProvider -Name $PackageProvider -Force | Out-Null
             }
         }
+        Invoke-Command -Session $Session -ScriptBlock $ScriptBlock
 
         Write-Output "Installing Modules on $Computer"
-        Invoke-Command -Session $Session -ScriptBlock {
+        $ScriptBlock = {
             $ProgressPreference = "SilentlyContinue"
             $Modules = @(
                 "ActiveDirectoryCSDsc",
@@ -63,10 +65,11 @@ process {
                 "SqlServerDsc"
             )
             foreach ($Module in $Modules) {
-                Write-Output "Installing Module $Module"
+                Write-Output "Installing Module $Module on $env:COMPUTERNAME"
                 Install-Module -Name $Module -Scope AllUsers -Repository "PSGallery" -Force
             }
         }
+        Invoke-Command -Session $Session -ScriptBlock $ScriptBlock
 
         Write-Output "Removing PSSession to $Computer"
         $Session | Remove-PSSession

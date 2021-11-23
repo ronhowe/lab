@@ -29,26 +29,28 @@ process {
             [PSCredential]
             $AdministratorCredential
         )
-        begin {}
+        begin {
+        }
         process {
             $ProgressPreference = "SilentlyContinue"
 
-            Write-Output "Enabling Administrator Account"
+            Write-Output "Enabling Administrator Account on $env:COMPUTERNAME"
             Enable-LocalUser -Name "Administrator"
 
-            Write-Output "Setting Administrator Account Passowrd"
+            Write-Output "Setting Administrator Account Passowrd on $env:COMPUTERNAME"
             Set-LocalUser -Name "Administrator" -Password $AdministratorCredential.Password
 
-            Write-Output "Setting Network Profile to Private"
+            Write-Output "Setting Network Profile to Private on $env:COMPUTERNAME"
             Get-NetAdapter -InterfaceDescription "Microsoft Hyper-V Network Adapter" | Set-NetConnectionProfile -NetworkCategory Private
 
-            Write-Output "Enabling WinRM"
+            Write-Output "Enabling WinRM on $env:COMPUTERNAME"
             Start-Process -FilePath "winrm" -ArgumentList @("quickconfig", "-force")
 
-            Write-Output "Setting Execution Policy to Unrestricted"
+            Write-Output "Setting Execution Policy to Unrestricted on $env:COMPUTERNAME"
             Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope LocalMachine -Force
         }
-        end {}
+        end {
+        }
     }
     Invoke-Command -VMName $ComputerName -Credential $UserCredential -ScriptBlock $ScriptBlock -ArgumentList $AdministratorCredential
 }
