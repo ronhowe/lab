@@ -11,13 +11,24 @@ param (
     [Parameter(Mandatory = $true)]
     [ValidateNotNullorEmpty()]
     [PSCredential]
-    $Credential
+    $AdministratorCredential,
+
+    [Parameter(Mandatory = $true)]
+    [ValidateNotNullorEmpty()]
+    [PSCredential]
+    $UserCredential
 )
 begin {
 }
 process {
     foreach ($Computer in $ComputerName) {
         Write-Output "Renaming Guest $Computer"
+        if ($Computer -eq "USER01") {
+            $Credential = $UserCredential
+        }
+        else {
+            $Credential = $AdministratorCredential
+        }
         $ScriptBlock = {
             Rename-Computer -NewName $using:Computer -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
         }

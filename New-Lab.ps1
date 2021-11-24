@@ -23,10 +23,14 @@ Read-Host "Hit Enter after completing the operating system installation on all l
 
 $ComputerNames | Checkpoint-VM -SnapshotName "OOBE"
 
-.\Initialize-Guest.ps1 -ComputerName "USER01" -AdministratorCredential $AdministratorCredential -UserCredential $UserCredential
+$ComputerNames | .\Rename-Guest.ps1 -AdministratorCredential $AdministratorCredential -UserCredential $UserCredential
 
-$ComputerNames | .\Rename-Guest.ps1 -Credential $AdministratorCredential
+$ComputerNames | .\Initialize-Guest.ps1 -AdministratorCredential $AdministratorCredential -UserCredential $UserCredential
 
 $ComputerNames | .\Install-GuestDependencies.ps1 -Credential $AdministratorCredential -PfxPath "$env:TEMP\DscPrivateKey.pfx" -PfxPassword $AdministratorCredential.Password
 
-$ComputerNames | .\Invoke-GuestConfiguration.ps1 -Credential $AdministratorCredential -Wait
+$ComputerNames | .\Invoke-GuestConfiguration.ps1 -Credential $AdministratorCredential
+
+.\Wait-GuestConfiguration.ps1 -ComputerName $ComputerNames -Credential $AdministratorCredential -RetryInterval 3
+
+.\Test-Lab.ps1

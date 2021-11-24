@@ -3,9 +3,9 @@
 
 [CmdletBinding()]
 param(
-    [Parameter(Mandatory = $true)]
+    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
     [ValidateNotNullorEmpty()]
-    [string]
+    [string[]]
     $ComputerName,
 
     [Parameter(Mandatory = $true)]
@@ -19,7 +19,6 @@ param(
     $UserCredential
 )
 begin {
-    Write-Output "Initializing Guest $ComputerName"
 }
 process {
     $ScriptBlock = {
@@ -50,7 +49,16 @@ process {
         end {
         }
     }
-    Invoke-Command -VMName $ComputerName -Credential $UserCredential -ScriptBlock $ScriptBlock -ArgumentList $AdministratorCredential
+    foreach ($Computer in $ComputerName) {
+        Write-Output "Initializing Guest $Computer"
+        if ($Computer -eq "USER01") {
+            Invoke-Command -VMName $ComputerName -Credential $UserCredential -ScriptBlock $ScriptBlock -ArgumentList $AdministratorCredential
+
+        }
+        else {
+            Invoke-Command -VMName $ComputerName -Credential $AdministratorCredential -ScriptBlock $ScriptBlock -ArgumentList $AdministratorCredential
+        }
+    }
 }
 end {
 }
