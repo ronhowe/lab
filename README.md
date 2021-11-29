@@ -9,14 +9,14 @@ The lab consists of the following four virtual machine nodes:
 - **WEB01** - Microsoft Windows Server node running Internet Information Services.
 - **USER01** - Microsoft Windows 10 node.
 
-All nodes are joined to a **LAB.LOCAL** domain.
+All nodes are joined to a **LAB.LOCAL** domain.  This can be customized in `GuestConfiguration.psd1`.
 
 # Secrets
 
 It is recommended that you use the same value for any secret when prompted.  This includes, but is not limited to the following:
 - `New-Lab.ps1`
     - **Administrator** - This is the Administrator account for nodes running Windows Server.  When completing the Windows Server installation, use this password.
-    - **User** - This is the User account for nodes running Windows 10.  When completing the Windows 10 installation, use this password.
+    - **User** - This is the User account for nodes running Windows 10.  When completing the operating system setup wizard, use this password.
 - `New-DscEncryptionCertificate.ps1`
     - **Password** - This is the password used when creating the certificate PFX file.
 
@@ -27,13 +27,13 @@ These scripts were developed and tested on my home PC with the following hardwar
 - **CPU** - Intel 5960X (16 cores)
 - **RAM** - 64 GB
 - **Storage** - 1 TB NVME SSD with ~200 GB free space
-- **Operating System** - Microsoft Windows 10 Pro
+- **Operating System** - Microsoft Windows 10 Pro 21H2
 
-Each guest virtual machine is provisioned with 4 CPU, 4 GB of RAM and a 50 GB disk.  This can be customized in `HostConfiguration.psd1`.
+Each guest virtual machine is provisioned with **4 CPU**, **4 GB of RAM** and a **50 GB disk**.  This can be customized in `HostConfiguration.psd1`.
 
 # Host Preparation
 
-1. Download the following ISOs:
+1. Download the following free ISOs from Microsoft:
 
 - [Microsoft Windows Server 2022](https://www.microsoft.com/en-us/evalcenter/evaluate-windows-server-2022)
 - [Microsoft Windows 10](https://www.microsoft.com/en-us/software-download/windows10)
