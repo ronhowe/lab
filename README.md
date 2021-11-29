@@ -1,90 +1,72 @@
 # Overview
 
-Creates a domain controller, database server, web server and client machine.
+This repo contains PowerShell scripts for provisioning and configuring a minimal lab environment.  The lab is intended to be used for learning the Microsoft platform.  Evaluation and developer ISOs are freely downloadable directly from Microsoft.
 
-All domain joined via PowerShell Desired State Configuration.
+The lab consists of the following virtual machines:
 
-Why Core or Desktop
+- DC01 - Microsoft Windows Server server node running Active Directory Domain Services.
+- SQL01 - Microsoft Windows Server server node running SQL Server.
+- WEB01 - Microsoft Windows Server server node running Internet Information Services.
+- USER01 - Microsoft Windows 10 client node.
 
-Can be used for learning.
+All nodes are joined to a LAB.LOCAL domain.
 
-Evalutation and developer ISOs are freely downloadable directly from Microsoft.
+# Host Requirements
 
-Must be Windows 10 Pro
+These scripts were developed and tested on my home PC with the following hardware and software:
 
-# Requirements
-
-Tested on an Intel 5960X with 16 cores, 64 GB of RAM and 1 TB NVME SSD running Microsoft Windows 10 Pro.
+- CPU - Intel 5960X with 16 cores
+- RAM - 64 GB of RAM
+- Storage - 1 TB NVME SSD
+- OS - Microsoft Windows 10 Pro
 
 # Host Preparation
 
-Download Microsoft ISO and note the location
+1. Download the following ISOs:
 
-- https://www.microsoft.com/en-us/evalcenter/evaluate-windows-server-2022
-- https://www.microsoft.com/en-us/software-download/windows10
-- https://www.microsoft.com/en-us/sql-server/sql-server-downloads
+- [Microsoft Windows Server 2022](https://www.microsoft.com/en-us/evalcenter/evaluate-windows-server-2022)
+- [Microsoft Windows 10](https://www.microsoft.com/en-us/software-download/windows10)
+- [Microsoft SQL Server 2019](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)
 
-#region Online Documentation
-# https://docs.microsoft.com/en-us/powershell/scripting/dsc/managing-nodes/metaConfig?view=powershell-7.2
-# https://github.com/dsccommunity/ActiveDirectoryDsc/wiki
-# https://github.com/dsccommunity/NetworkingDsc/wiki
-# https://github.com/dsccommunity/SqlServerDsc/wiki
-#endregion Online Documentation
-        # https://github.com/dsccommunity/SqlServerDsc/wiki/SqlSetup
+2. Enable Hyper-V in Windows.
+3. Clone the repo locally.
+4. Run Windows PowerShell as **Administrator**.
+5. Execute the following commands:
+
+`Import-Module -Name "Hyper-V"`
+
+`Get-VMHost | Select-Object -ExpandProperty "VirtualHardDiskPath"`
+
+`Install-HostDependencies.ps1 -Verbose`
+
+`New-DscEncryptionCertificate.ps1 # prompts for password`
+
+6. Edit **HostConfiguration.psd1**:
+
+- `WindowsServerIsoPath` - The path to the Windows Server 2022 ISO downloaded above.
+- `WindowsClientIsoPath` - The path to the Windows 10 ISO downloaded above.
+- `SqlServerIsoPath` - The path to the SQL Server 2019 ISO downloaded above.
+- `VirtualHardDisksPath` - The path to virtual hard disks (`VirtualHardDiskPath`) from above.
+
+7. Edit **GuestConfiguration.psd1**:
+
+- `Thumbprint` - From `New-DscEncryptionCertificate.ps1` above.
+- `TimeZone` - [List of .NET Time Zone Values](https://lonewolfonline.net/timezone-information/#:~:text=List%20of%20.Net%20Timezone%20Values%20%20%20,%20%20False%20%2018%20more%20rows%20)
+- `Sku` - In the spirit of security, all server nodes are intended to run Microsoft Windows Server "Core".  As such, they do not have a Desktop Experience installed and need to be managed remotely from the client node via remote PowerShell, Windows Admin Center, Remote Server Administration Tools (RSAT), SQL Server Management Studio, etc.  If you wish to install Windows Server with a Desktop Expirience, change **Core** to **Desktop** accordingly.
 
 
+# Setup
 
-- Enable Hyper-V in Windows
-- Run Windows PowerShell as Administrator
+`.\New-Lab.ps1`
 
-Install-HostDependencies.ps1 -Verbose
-
-Import-Module -Name "Hyper-V"
-
-Get-VMHost | Select-Object -ExpandProperty "VirtualHardDiskPath"
-
-Update HostConfiguration.psd1 and update 
-
-    SqlServerIsoPath     = "C:\Users\ronhowe\Downloads\LAB\SQL Server 2019 Developer.iso"
-    VirtualHardDisksPath = "D:\Hyper-V\Virtual Hard Disks"
-    WindowsClientIsoPath = "C:\Users\ronhowe\Downloads\LAB\Windows 10 21H2.iso"
-    WindowsServerIsoPath = "C:\Users\ronhowe\Downloads\LAB\Windows Server 2022.iso"
-
-New-DscEncryptionCertificate.ps1 -Verbose # prompts for password
-
-Edit GuestConfiguration.psd1 and update
-
-    Thumbprint
-    Timezone
-    Core or Desktop
-
-# Guest Preparation
-
-Organization, Domain Join, "setup" user with same, standard password
-
-Windows PowerShell
-    Install DSC Resources
-    Edit host configuration
-        ISO location
-        Core or Desktop
-    Run Debug-TestConfiguration chunks
-        list them 1 by one with screenshots
-        Administrator is same for all
-        
-    Deploy
-        Install Core or Desktop
-        Use same Administrator password
-
-    Edit guest configuration
-Tear down and/or checkpoint apply scenarios
+Notes:
+- For simplicity, the same credential (username/password) will be used for all user secrets.
+- For Windows 10, use a local user "User" to complete the installation.  Use the same password used when prompted for the User credential.
 
 # Testing
 
-# Cleaning Up
+`.\Test-Lab.ps1`
 
-# Resources
+# Clean Up
 
-- https://docs.microsoft.com/en-us/powershell/scripting/dsc/pull-server/securemof?view=powershell-7.2#certificate-creation
-- https://github.com/pester/Pester
-- https://blog.danskingdom.com/A-better-way-to-do-TestCases-when-unit-testing-with-Pester/
-- https://sqldbawithabeard.com/2017/07/06/writing-dynamic-and-random-tests-cases-for-pester/
+`.\Remove-Lab.ps1`
