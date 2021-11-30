@@ -47,7 +47,7 @@ Each guest virtual machine is provisioned with **4 CPU**, **4 GB of RAM** and a 
 
 `Get-VMHost | Select-Object -ExpandProperty "VirtualHardDiskPath"`
 
-`.\New-DscEncryptionCertificate.ps1 # prompts for password`
+`.\New-DscEncryptionCertificate.ps1`
 
 5. Edit `HostConfiguration.psd1`:
 
