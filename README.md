@@ -47,8 +47,6 @@ Each guest virtual machine is provisioned with **4 CPU**, **4 GB of RAM** and a 
 
 `Get-VMHost | Select-Object -ExpandProperty "VirtualHardDiskPath"`
 
-`.\New-DscEncryptionCertificate.ps1`
-
 5. Edit `HostConfiguration.psd1`:
 
 - `SqlServerIsoPath` - The path to the SQL Server 2019 ISO downloaded above.
@@ -56,10 +54,14 @@ Each guest virtual machine is provisioned with **4 CPU**, **4 GB of RAM** and a 
 - `WindowsClientIsoPath` - The path to the Windows 10 ISO downloaded above.
 - `WindowsServerIsoPath` - The path to the Windows Server 2022 ISO downloaded above.
 
-6. Edit `GuestConfiguration.psd1`:
+6. Execute the following command:
+
+`.\New-DscEncryptionCertificate.ps1`
+
+7. Edit `GuestConfiguration.psd1`:
 
 - `Sku` - In the spirit of security, all server nodes are intended to run Microsoft Windows Server "Core".  As such, they do not have a Desktop Experience installed and need to be managed remotely from the client node via remote PowerShell, Windows Admin Center, Remote Server Administration Tools (RSAT), SQL Server Management Studio, etc.  If you wish to install Windows Server with a Desktop Expirience, change **Core** to **Desktop** accordingly.
-- `Thumbprint` - From `New-DscEncryptionCertificate.ps1` above.
+- `Thumbprint` - The thumbprint returned from `New-DscEncryptionCertificate.ps1` above.
 - `TimeZone` - [List of .NET Time Zone Values](https://lonewolfonline.net/timezone-information/#:~:text=List%20of%20.Net%20Timezone%20Values%20%20%20,%20%20False%20%2018%20more%20rows%20)
 
 
