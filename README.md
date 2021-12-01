@@ -13,7 +13,7 @@ All nodes are joined to a **LAB.LOCAL** domain.  This can be customized in `Gues
 
 # Secrets
 
-It is recommended that you use the same value for any secret when prompted.  This includes, but is not limited to the following:
+It is recommended that you use the same password value for any secret when prompted.  This includes, but is not limited to the following:
 - `New-Lab.ps1`
     - **Administrator** - This is the Administrator account for nodes running Windows Server.  When completing the Windows Server installation, use this password.
     - **User** - This is the User account for nodes running Windows 10.  When completing the operating system setup wizard, use this password.
@@ -41,7 +41,7 @@ Each guest virtual machine is provisioned with **4 CPU**, **4 GB of RAM** and a 
 
 2. Enable Hyper-V in Windows.
 3. Run Windows PowerShell as **Administrator**.
-4. Execute the following commands:
+4. Execute the following command(s):
 
 `Import-Module -Name "Hyper-V"`
 
@@ -54,7 +54,7 @@ Each guest virtual machine is provisioned with **4 CPU**, **4 GB of RAM** and a 
 - `WindowsClientIsoPath` - The path to the Windows 10 ISO downloaded above.
 - `WindowsServerIsoPath` - The path to the Windows Server 2022 ISO downloaded above.
 
-6. Execute the following command:
+6. Execute the following command(s):
 
 `.\New-DscEncryptionCertificate.ps1`
 
@@ -67,14 +67,31 @@ Each guest virtual machine is provisioned with **4 CPU**, **4 GB of RAM** and a 
 
 # Setup
 
-This script will pause in order for you to complete the operating system setup wizard on each virtual machine.  For Windows 10, opt to create a local user "User" and select the Domain Join option.
+The setup script will pause in order for you to complete the operating system setup wizard on each virtual machine.  Use the following options for setting up Windows:
+
+- **Windows Server**
+    - Select either Standard Edition or Datacenter Edition
+    - Select Desktop Experience only if you have customzed `GuestConfiguration.psd1` and set the `Sku` to match.
+- **Windows 10**
+    - *How would you like to set up?* - Set up for an organization
+    - *Sign in with Microsoft* - Domain join instead (lower left corner)
+    - *Who's going to use this PC?* - User
+
+1. Run Windows PowerShell as **Administrator**.
+2. Execute the following command(s):
 
 `.\New-Lab.ps1`
 
 # Testing
 
+1. Run Windows PowerShell as **Administrator**.
+2. Execute the following command(s):
+
 `.\Test-Lab.ps1`
 
 # Clean Up
+
+1. Run Windows PowerShell as **Administrator**.
+2. Execute the following command(s):
 
 `.\Remove-Lab.ps1`
