@@ -73,9 +73,11 @@ The setup script will pause in order for you to complete the operating system se
     - Select either Standard Edition or Datacenter Edition
     - Select Desktop Experience only if you have customzed `GuestConfiguration.psd1` and set the `Sku` to match.
 - **Windows 10**
-    - *How would you like to set up?* - Set up for an organization
-    - *Sign in with Microsoft* - Domain join instead (lower left corner)
-    - *Who's going to use this PC?* - User
+    - Select Windows 10 Pro
+    - When prompted, select these options?
+        - *How would you like to set up?* - Set up for an organization
+        - *Sign in with Microsoft* - Domain join instead (lower left corner)
+        - *Who's going to use this PC?* - User
 
 1. Run Windows PowerShell as **Administrator**.
 2. Execute the following command(s):
