@@ -4,7 +4,7 @@
             ActionAfterReboot    = "ContinueConfiguration"
             PSDscAllowDomainUser = $true
             CertificateFile      = "$env:TEMP\DscPublicKey.cer"
-            CertificateId        = "AC4EAFDDAA8EC31A7CCAC7CBB9966B65BB9C519C"
+            CertificateId        = "A1E528A8EF2925733FE063A00CCB47D921B63F62"
             ConfigurationMode    = "ApplyAndAutoCorrect"
             DomainName           = "LAB.LOCAL"
             NodeName             = "*"
@@ -43,7 +43,7 @@ RemoteDesktop-UserMode-In-TCP
             DatabasePath                = "C:\Windows\NTDS"
             LogPath                     = "C:\Windows\NTDS"
             NodeName                    = "DC01"
-            Sku                         = "Core"
+            Sku                         = "Desktop"
             SkipCcmClientSDK            = $true
             SkipComponentBasedServicing = $true
             SkipPendingFileRename       = $true
@@ -54,7 +54,7 @@ RemoteDesktop-UserMode-In-TCP
             Features            = "SQLENGINE"
             InstanceName        = "MSSQLSERVER"
             NodeName            = "SQL01"
-            Sku                 = "Core"
+            Sku                 = "Desktop"
             SourcePath          = "E:\"
             SQLSysAdminAccounts = @("Administrators")
         };
@@ -65,7 +65,7 @@ RemoteDesktop-UserMode-In-TCP
         };
         @{
             NodeName = "WEB01"
-            Sku      = "Core"
+            Sku      = "Desktop"
         };
     );
 }
