@@ -34,7 +34,7 @@ process {
             Write-Output "Enabling Administrator Account on $env:COMPUTERNAME"
             Enable-LocalUser -Name "Administrator"
 
-            Write-Output "Setting Administrator Account Passowrd on $env:COMPUTERNAME"
+            Write-Output "Setting Administrator Account Password on $env:COMPUTERNAME"
             Set-LocalUser -Name "Administrator" -Password $AdministratorCredential.Password
 
             Write-Output "Setting Network Profile to Private on $env:COMPUTERNAME"
