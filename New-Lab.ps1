@@ -21,7 +21,7 @@ $ComputerNames | ForEach-Object { Start-Process -FilePath "vmconnect.exe" -Argum
 
 Read-Host "Hit Enter after completing the operating system installation on all lab virtual machines"
 
-$ComputerNames | Checkpoint-VM -SnapshotName "OOBE"
+# $ComputerNames | Checkpoint-VM -SnapshotName "OOBE"
 
 $ComputerNames | .\Rename-Guest.ps1 -AdministratorCredential $AdministratorCredential -UserCredential $UserCredential
 
