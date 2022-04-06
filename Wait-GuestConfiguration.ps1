@@ -26,7 +26,10 @@ process {
         $ExpectedCount = 1
     }
 
-    $ScriptBlock = { return New-Object -TypeName PSObject -Property  @{ Status = (Get-DscConfigurationStatus -ErrorAction SilentlyContinue).Status } }
+    $ScriptBlock = {
+        Start-DscConfiguration -UseExisting -Wait -ErrorAction SilentlyContinue
+        return New-Object -TypeName PSObject -Property  @{ Status = (Get-DscConfigurationStatus -ErrorAction SilentlyContinue).Status }
+    }
 
     Write-Output "Getting DSC Configuration Status"
 
