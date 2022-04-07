@@ -1,7 +1,7 @@
 @{
     AllNodes = @(
         @{
-            MaximumSizeBytes     = 50GB
+            MaximumSizeBytes     = 80GB
             MinimumMemory        = 4GB
             NodeName             = "localhost"
             ProcessorCount       = 4
