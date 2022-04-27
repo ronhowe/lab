@@ -226,7 +226,8 @@ ClientBin/
 *.dbmdl
 *.dbproj.schemaview
 *.jfm
-*.pfx
+#Intentionally want this Mickey Mouse test PFX included.
+#*.pfx
 *.publishsettings
 orleans.codegen.cs
 

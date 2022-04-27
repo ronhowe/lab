@@ -4,7 +4,7 @@
             ActionAfterReboot    = "ContinueConfiguration"
             PSDscAllowDomainUser = $true
             CertificateFile      = "$env:TEMP\DscPublicKey.cer"
-            CertificateId        = "42B7FD668002F16BE7CBEA5701FC498BE564CFAB"
+            CertificateId        = "EAC69C0CDF518426D6342A0673EAA22C9A5D2860"
             ConfigurationMode    = "ApplyOnly"
             DomainName           = "LAB.LOCAL"
             NodeName             = "*"

@@ -27,7 +27,7 @@ $ComputerNames | .\Rename-Guest.ps1 -AdministratorCredential $AdministratorCrede
 
 $ComputerNames | .\Initialize-Guest.ps1 -AdministratorCredential $AdministratorCredential -UserCredential $UserCredential
 
-$ComputerNames | .\Install-GuestDependencies.ps1 -Credential $AdministratorCredential -PfxPath "$env:TEMP\DscPrivateKey.pfx" -PfxPassword $AdministratorCredential.Password
+$ComputerNames | .\Install-GuestDependencies.ps1 -Credential $AdministratorCredential -PfxPath ".\DscPrivateKey.pfx" -PfxPassword $AdministratorCredential.Password
 
 $ComputerNames | .\Invoke-GuestConfiguration.ps1 -Credential $AdministratorCredential
 
