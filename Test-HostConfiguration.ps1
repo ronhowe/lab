@@ -1,8 +1,8 @@
 $TestCases = @(
-    @{ ComputerName = "DC01" }
-    @{ ComputerName = "SQL01" }
-    @{ ComputerName = "USER01" }
-    @{ ComputerName = "WEB01" }
+    @{ ComputerName = "DC02" }
+    @{ ComputerName = "SQL02" }
+    @{ ComputerName = "USER02" }
+    @{ ComputerName = "WEB02" }
 )
 Describe "Hyper-V" {
     Context "VM State" {

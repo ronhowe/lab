@@ -1,8 +1,8 @@
 $TestCases = @(
-    @{ ComputerName = "DC01" }
-    @{ ComputerName = "SQL01" }
-    @{ ComputerName = "USER01" }
-    @{ ComputerName = "WEB01" }
+    @{ ComputerName = "DC02" }
+    @{ ComputerName = "SQL02" }
+    @{ ComputerName = "USER02" }
+    @{ ComputerName = "WEB02" }
 )
 Describe "Networking" {
     Context "Firewall" {
@@ -17,15 +17,15 @@ Describe "Networking" {
 }
 Describe "SQL Server" {
     Context "Endpoint" {
-        It "SQL01 SQL Port Open" {
-            (Test-NetConnection -ComputerName "SQL01" -Port 1433 -WarningAction SilentlyContinue).TcpTestSucceeded | Should -BeTrue
+        It "SQL02 SQL Port Open" {
+            (Test-NetConnection -ComputerName "SQL02" -Port 1433 -WarningAction SilentlyContinue).TcpTestSucceeded | Should -BeTrue
         }
     }
 }
 Describe "Web Server" {
     Context "Endpoint" {
-        It "WEB01 HTTP Port Open" {
-            (Test-NetConnection -ComputerName "WEB01" -Port 80 -WarningAction SilentlyContinue).TcpTestSucceeded | Should -BeTrue
+        It "WEB02 HTTP Port Open" {
+            (Test-NetConnection -ComputerName "WEB02" -Port 80 -WarningAction SilentlyContinue).TcpTestSucceeded | Should -BeTrue
         }
     }
 }
