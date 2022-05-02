@@ -4,10 +4,10 @@ This repo contains PowerShell scripts for provisioning and configuring a minimal
 
 The lab consists of the following four virtual machine nodes:
 
-- **DC01** - Microsoft Windows Server node running Active Directory Domain Services.
-- **SQL01** - Microsoft Windows Server node running SQL Server.
-- **WEB01** - Microsoft Windows Server node running Internet Information Services.
-- **USER01** - Microsoft Windows 10 node.
+- **DC41** - Microsoft Windows Server node running Active Directory Domain Services.
+- **SQL41** - Microsoft Windows Server node running SQL Server.
+- **WEB41** - Microsoft Windows Server node running Internet Information Services.
+- **USER41** - Microsoft Windows 10 node.
 
 All nodes are joined to a **LAB.LOCAL** domain.  This can be customized in `GuestConfiguration.psd1`.
 

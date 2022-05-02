@@ -23,7 +23,7 @@ begin {
 process {
     foreach ($Computer in $ComputerName) {
         Write-Output "Renaming Guest $Computer"
-        if ($Computer -eq "USER01") {
+        if ($Computer -eq "USER41") {
             $Credential = $UserCredential
         }
         else {

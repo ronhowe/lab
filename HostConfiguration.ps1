@@ -12,7 +12,7 @@ Configuration HostConfiguration {
     Import-DscResource -ModuleName "xHyper-V"
 
     Node "localhost" {
-        @("DC01", "SQL01", "USER01", "WEB01") | ForEach-Object {
+        @("DC41", "SQL41", "USER41", "WEB41") | ForEach-Object {
             xVHD "xVHD$_" {
                 Ensure           = $Ensure
                 Generation       = "VHDX"
@@ -33,7 +33,7 @@ Configuration HostConfiguration {
                 VhdPath                     = Join-Path -Path $Node.VirtualHardDisksPath -ChildPath "$_.vhdx"
             }
             if ($Ensure -eq "Present") {
-                if ($_ -eq "USER01") {
+                if ($_ -eq "USER41") {
                     $WindowsIsoPath = $Node.WindowsClientIsoPath
                 }
                 else {
@@ -47,7 +47,7 @@ Configuration HostConfiguration {
                     Path               = $WindowsIsoPath
                     VMName             = $_
                 }
-                if ($_ -eq "SQL01") {
+                if ($_ -eq "SQL41") {
                     xVMDvdDrive "xVMDvdDriveSqlServer$_" {
                         ControllerLocation = 1
                         ControllerNumber   = 1
