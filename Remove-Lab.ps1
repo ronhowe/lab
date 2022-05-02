@@ -3,7 +3,7 @@
 
 Set-Location -Path $PSScriptRoot
 
-$ComputerNames = @("DC02", "SQL02", "USER02", "WEB02")
+$ComputerNames = @("DC41", "SQL41", "USER41", "WEB41")
 
 .\Import-HostDependencies.ps1
 

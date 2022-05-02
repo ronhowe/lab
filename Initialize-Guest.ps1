@@ -51,7 +51,7 @@ process {
     }
     foreach ($Computer in $ComputerName) {
         Write-Output "Initializing Guest $Computer"
-        if ($Computer -eq "USER02") {
+        if ($Computer -eq "USER41") {
             Invoke-Command -VMName $ComputerName -Credential $UserCredential -ScriptBlock $ScriptBlock -ArgumentList $AdministratorCredential
 
         }

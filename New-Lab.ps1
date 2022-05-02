@@ -7,7 +7,7 @@ $AdministratorCredential = Get-Credential -Message "Enter Administrator Credenti
 
 $UserCredential = Get-Credential -Message "Enter User Credential" -UserName "User"
 
-$ComputerNames = @("DC02", "SQL02", "USER02", "WEB02")
+$ComputerNames = @("DC41", "SQL41", "USER41", "WEB41")
 
 .\Install-HostDependencies.ps1
 

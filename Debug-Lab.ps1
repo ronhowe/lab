@@ -1,5 +1,5 @@
 $AdministratorCredential = Get-Credential -Message "Enter Administrator Credential" -Username "Administrator"
 
-$ComputerNames = @("DC02", "SQL02", "USER02", "WEB02")
+$ComputerNames = @("DC41", "SQL41", "USER41", "WEB41")
 
 $ComputerNames | .\Invoke-GuestConfiguration.ps1 -Credential $AdministratorCredential -Wait
