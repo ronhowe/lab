@@ -3,7 +3,7 @@
 
 Set-Location -Path $PSScriptRoot
 
-$AdministratorCredential = Get-Credential -Message "Enter Administrator Credential" -Username "Administrator"
+$AdministratorCredential = Get-Credential -Message "Enter Administrator Credential" -UserName "Administrator"
 
 $UserCredential = Get-Credential -Message "Enter User Credential" -UserName "User"
 
