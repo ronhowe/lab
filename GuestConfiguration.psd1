@@ -37,6 +37,7 @@ NETDIS-WSDEVNT-Out-TCP
 NETDIS-WSDEVNTS-In-TCP
 NETDIS-WSDEVNTS-Out-TCP
 RemoteDesktop-UserMode-In-TCP
+WMI-RPCSS-In-TCP
 "@
         },
         @{
