@@ -5,7 +5,7 @@
             PSDscAllowDomainUser = $true
             CertificateFile      = "$env:TEMP\DscPublicKey.cer"
             CertificateId        = "EAC69C0CDF518426D6342A0673EAA22C9A5D2860"
-            ConfigurationMode    = "ApplyOnly"
+            ConfigurationMode    = "ApplyAndAutoCorrect"
             DomainName           = "LAB.LOCAL"
             NodeName             = "*"
             RebootNodeIfNeeded   = $true
