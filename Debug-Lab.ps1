@@ -1,5 +1,3 @@
-#requires -RunAsAdministrator
-
 # Configure preferences.
 $ProgressPreference = "SilentlyContinue"
 
@@ -8,9 +6,15 @@ Import-Module -Name "Hyper-V"
 
 # Set frequently used variables.
 $Credential = Get-Credential -Message "Enter Administrator Credential"
-$ComputerName = "WINDOWS"
+$ComputerName = Read-Host -Prompt "Enter Computer Name"
 
 # TODO Create Virtual Machine
+
+# Start the computer.
+Start-VM -VMName $ComputerName
+
+# Stop the computer.
+Stop-VM -VMName $ComputerName
 
 # Get the computer name.
 Invoke-Command -VMName $ComputerName -Credential $Credential -ScriptBlock { hostname }
