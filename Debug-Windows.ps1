@@ -25,4 +25,4 @@ Enter-PSSession -Session $Session
 Remove-PSSession -Session $Session
 
 # Reboot the computer.
-Restart-Computer -ComputerName $ComputerName -Credential $Credential -Force -Wait
+Restart-Computer -ComputerName $ComputerName -Credential $Credential -Wait -For Wmi -Force
