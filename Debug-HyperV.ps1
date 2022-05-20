@@ -62,3 +62,8 @@ Remove-VM -VMName $VMName -Force
 
 # Remove the virtual hard disk.
 Remove-Item -Path $VhdPath -Force
+
+# Get IP address.  Virtual machine must be running.
+Get-VMNetworkAdapter -VMName $VMName |
+Select-Object -ExpandProperty "IPAddresses" |
+Where-Object { $_.Length -lt 24 }
