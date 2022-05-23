@@ -5,10 +5,12 @@ $ProgressPreference = "SilentlyContinue"
 
 # Set frequently used variables.
 $Credential = Get-Credential -Message "Enter administrator Credential" -UserName "administrator"
+$Username = $Credential.Username
 $ComputerName = Read-Host -Prompt "Enter Computer Name"
 
-# https://pitstop.manageengine.com/portal/en/kb/articles/how-to-get-the-ip-address-for-hyper-v-linux-vm-in-apm
-# sudo apt-get install linux-azure
+# Test SSH
+Test-NetConnection -ComputerName $ComputerName -Port 22
 
+# Remote witih SSH
 # ssh administrator@linux-vm
-ssh "$($($Credential).Username)@$($ComputerName)"
+ssh "$Username@$ComputerName"
