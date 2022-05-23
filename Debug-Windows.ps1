@@ -22,3 +22,10 @@ Get-PSSession | Remove-PSSession
 
 # Reboot the computer.
 Restart-Computer -ComputerName $ComputerName -Credential $Credential -Wait -For Wmi -Force
+
+# Get and extend evaluation licensing information.  Works only in local console session.
+# https://sid-500.com/2017/08/08/windows-server-2016-evaluation-how-to-extend-the-trial-period/
+slmgr -dlv
+slmgr -rearm
+Restart-Computer
+slmgr -dli
