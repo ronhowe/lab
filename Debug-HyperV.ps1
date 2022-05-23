@@ -68,6 +68,11 @@ Remove-Item -Path $VhdPath -Force
 # https://pitstop.manageengine.com/portal/en/kb/articles/how-to-get-the-ip-address-for-hyper-v-linux-vm-in-apm
 # sudo apt-get install linux-azure
 
+# Get all virtual machine IP addresses.  Virtual machines must be running.
+Get-VM |
+Select-Object -ExpandProperty "NetworkAdapters" |
+Select-Object -Property "VMName", "IPAddresses"
+
 # Get IP address.  Virtual machine must be running.
 [System.Net.IPAddress]$IpAddress =
 Get-VMNetworkAdapter -VMName $VMName |
