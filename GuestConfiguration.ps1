@@ -35,16 +35,16 @@ Configuration GuestConfiguration {
         $IpAddress = $(Get-NodeGatewayIpAddress).Split(".")
 
         $IpAddress[-1] = switch ($NodeName) {
-            "DC41" {
+            "DC-VM" {
                 10
             }
-            "SQL41" {
+            "SQL-VM" {
                 20
             }
-            "USER41" {
+            "USER-VM" {
                 40
             }
-            "WEB41" {
+            "WEB-VM" {
                 30
             }
         }
@@ -91,7 +91,7 @@ Configuration GuestConfiguration {
             AddressFamily  = "IPv4"
             InterfaceAlias = "Ethernet"
         }
-        if ($Node.NodeName -eq "DC41") {
+        if ($Node.NodeName -eq "DC-VM") {
             Computer "RenameComputer" {
                 Name = $Node.NodeName
             }
@@ -104,7 +104,7 @@ Configuration GuestConfiguration {
         }
         else {
             DnsServerAddress "SetDnsServerIpAddress" {
-                Address        = $(Get-NodeIpAddress -NodeName "DC41"),$(Get-NodeGatewayIpAddress)
+                Address        = $(Get-NodeIpAddress -NodeName "DC-VM"),$(Get-NodeGatewayIpAddress)
                 AddressFamily  = "IPv4"
                 InterfaceAlias = "Ethernet"
                 Validate       = $false
@@ -150,7 +150,7 @@ Configuration GuestConfiguration {
             ValueName = "fdenyTSConnections"
         }
     }
-    Node "DC41" {
+    Node "DC-VM" {
         WindowsFeature "InstallActiveDirectoryServices" {
             Ensure = "Present"
             Name   = "AD-Domain-Services"
@@ -192,7 +192,7 @@ Configuration GuestConfiguration {
             ForestFQDN                        = $Node.DomainName
         }
     }
-    Node "SQL41" {
+    Node "SQL-VM" {
         SqlSetup "InstallSqlServer" {
             DependsOn            = "[Computer]JoinDomain"
             Features             = $Node.Features
@@ -214,14 +214,14 @@ Configuration GuestConfiguration {
             SourcePath   = $Node.SourcePath
         }
     }
-    Node "USER41" {
+    Node "USER-VM" {
         File "CreateTestFolder" {
             DestinationPath = $Node.TestFolderPath
             Ensure          = "Present"
             Type            = "Directory"
         }
     }
-    Node "WEB41" {
+    Node "WEB-VM" {
         WindowsFeature "InstallWebServer" {
             Ensure = "Present"
             Name   = "Web-Server" 

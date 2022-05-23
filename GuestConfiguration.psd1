@@ -43,7 +43,7 @@ WMI-RPCSS-In-TCP
         @{
             DatabasePath                = "C:\Windows\NTDS"
             LogPath                     = "C:\Windows\NTDS"
-            NodeName                    = "DC41"
+            NodeName                    = "DC-VM"
             Sku                         = "Desktop"
             SkipCcmClientSDK            = $true
             SkipComponentBasedServicing = $true
@@ -54,18 +54,18 @@ WMI-RPCSS-In-TCP
         @{
             Features            = "SQLENGINE"
             InstanceName        = "MSSQLSERVER"
-            NodeName            = "SQL41"
+            NodeName            = "SQL-VM"
             Sku                 = "Desktop"
             SourcePath          = "E:\"
             SQLSysAdminAccounts = @("Administrators")
         };
         @{
-            NodeName       = "USER41"
+            NodeName       = "USER-VM"
             Sku            = "Desktop"
             TestFolderPath = "C:\test"
         };
         @{
-            NodeName = "WEB41"
+            NodeName = "WEB-VM"
             Sku      = "Desktop"
         };
     );

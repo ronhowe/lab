@@ -3,7 +3,7 @@
 
 param(
     [string[]]
-    $ComputerNames = @("DC41", "SQL41", "USER41", "WEB41")
+    $ComputerNames = @("DC-VM", "SQL-VM", "USER-VM", "WEB-VM")
 )
 
 Set-Location -Path $PSScriptRoot
