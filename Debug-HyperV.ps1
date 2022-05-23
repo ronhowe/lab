@@ -5,6 +5,7 @@ $ProgressPreference = "SilentlyContinue"
 
 # Import modules.
 Import-Module -Name "Hyper-V"
+Import-Module -Name "HostsFile"
 
 # Set frequently used variables.
 $Credential = Get-Credential -Message "Enter Administrator Credential"
@@ -31,7 +32,7 @@ Set-VM -VMName $VMName -ProcessorCount 4
 # Disable automatic checkpoints.
 Set-VM -Name  $VMName -AutomaticCheckpointsEnabled $false
 
-# Enable guest services.
+# Enable guest services.  Windows only.
 Enable-VMIntegrationService -VMName $VMName -Name "Guest Service Interface"
 
 # Add DVD drive with mounted ISO.
@@ -63,8 +64,21 @@ Remove-VM -VMName $VMName -Force
 # Remove the virtual hard disk.
 Remove-Item -Path $VhdPath -Force
 
-# Get IP address.  Virtual machine must be running.  Linux not supported.
-Get-VM |
-Select-Object -ExpandProperty "NetworkAdapters" |
-Select-Object -Property "VMName", "IPAddresses" |
-Format-Table -Auto
+# Enable guest services.  Linux only.  Must run locally.
+# https://pitstop.manageengine.com/portal/en/kb/articles/how-to-get-the-ip-address-for-hyper-v-linux-vm-in-apm
+# sudo apt-get install linux-azure
+
+# Get IP address.  Virtual machine must be running.
+[System.Net.IPAddress]$IpAddress =
+Get-VMNetworkAdapter -VMName $VMName |
+Select-Object -ExpandProperty "IPAddresses" |
+Where-Object { $_.Length -lt 24 }
+
+# Get hosts file entry.
+Get-HostEntry -HostName $VMName -Section "linux"
+
+# Remove hosts file entry.
+Remove-HostEntry -HostName $VMName -Section "linux"
+
+# Add hosts file entry.
+Add-HostEntry -HostName $VMName -IpAddress $IpAddress -Section "linux" | Out-Null
