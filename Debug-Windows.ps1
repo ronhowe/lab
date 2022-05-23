@@ -7,6 +7,9 @@ $ProgressPreference = "SilentlyContinue"
 $Credential = Get-Credential -Message "Enter Administrator Credential" -UserName "Administrator"
 $ComputerName = Read-Host -Prompt "Enter Computer Name"
 
+# PING the computer.
+Test-NetConnection -ComputerName $ComputerName -Port 5985 -WarningAction SilentlyContinue
+
 # Set Windows Firewall for PING (ICMP).
 Invoke-Command -ComputerName $ComputerName -Credential $Credential -ScriptBlock { New-NetFirewallRule -DisplayName "Allow inbound ICMPv4" -Direction Inbound -Protocol ICMPv4 -IcmpType 8 -Action Allow }
 Invoke-Command -ComputerName $ComputerName -Credential $Credential -ScriptBlock { New-NetFirewallRule -DisplayName "Allow inbound ICMPv6" -Direction Inbound -Protocol ICMPv6 -IcmpType 8 -Action Allow }
