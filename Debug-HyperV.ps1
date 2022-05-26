@@ -1,74 +1,77 @@
 #requires -RunAsAdministrator
 
-# Import modules.
+# Import module(s).
 Import-Module -Name "Hyper-V"
 
-# Set frequently used variables.
-$Credential = Get-Credential -Message "Enter Administrator Credential"
-$HostName = Read-Host -Prompt "Enter Host Name"
-$VhdPath = "D:\Hyper-V\Virtual Hard Disks\$HostName.vhdx"
-$IsoPath = "C:\Users\ronhowe\Downloads\LAB\Windows Server 2022.iso"
+# Get the operating system.
+$OperatingSystem = Read-Host -Prompt "(L)inux or (W)indows"
+
+# Get the ISO path.
+$IsoPath =
+switch ($OperatingSystem) {
+    "L" { "C:\Users\ronhowe\Downloads\LAB\ubuntu-20.04.4-live-server-amd64.iso" }
+    "W" { "C:\Users\ronhowe\Downloads\LAB\Windows Server 2022.iso" }
+    default { throw }
+}
+
+# Get the virtual machine name.
+$VMName = Read-Host -Prompt "Enter Virtual Machine Name"
+
+# Get the virtual hard drive path.
+$VhdPath = "D:\Hyper-V\Virtual Hard Disks\$VMName.vhdx"
+
+# Get the virtual switch name.
 $SwitchName = "Default Switch"
 
 # Create the virtual hard disk.
 New-VHD -Path $VhdPath -SizeBytes 127GB -Dynamic
 
-# Get the virtual hard disk.
-Get-VHD -Path $VhdPath
-
 # Create the virtual machine.
-New-VM -Name $HostName -MemoryStartupBytes 4GB -VHDPath $VhdPath -SwitchName $SwitchName -Generation 2
-
-# Get the virtual machine.
-Get-VM -VMName $HostName
+New-VM -Name $VMName -MemoryStartupBytes 4GB -VHDPath $VhdPath -SwitchName $SwitchName -Generation 2
 
 # Set the processor count.
-Set-VM -VMName $HostName -ProcessorCount 4
+Set-VM -VMName $VMName -ProcessorCount 4
 
 # Disable automatic checkpoints.
-Set-VM -Name $HostName -AutomaticCheckpointsEnabled $false
+Set-VM -Name $VMName -AutomaticCheckpointsEnabled $false
 
-# Enable guest services.  Windows only.
-Enable-VMIntegrationService -VMName $HostName -Name "Guest Service Interface"
+# Enable guest services.
+Enable-VMIntegrationService -VMName $VMName -Name "Guest Service Interface"
 
 # Add DVD drive with mounted ISO.
-Add-VMDvdDrive -VMName $HostName -Path $IsoPath
+Add-VMDvdDrive -VMName $VMName -Path $IsoPath
 
 # Set device boot order.
-Set-VMFirmware -VMName $HostName -FirstBootDevice $(Get-VMDvdDrive -VMName $HostName)
+Set-VMFirmware -VMName $VMName -FirstBootDevice $(Get-VMDvdDrive -VMName $VMName)
 
-# Get device boot order.
-Get-VMFirmware -VMName $HostName | Select-Object -ExpandProperty "BootOrder"
+# Disable secure boot for Linux virtual machines.
+# https://docs.microsoft.com/en-us/windows-server/virtualization/hyper-v/supported-ubuntu-virtual-machines-on-hyper-v
+if ($OperatingSystem -eq "L") {
+    Set-VMFirmware -VMName $VMName -EnableSecureBoot Off
+}
+
+# Open the virtual machine console.
+vmconnect.exe localhost $VMName
 
 # Start the virtual machine.
-Start-VM -VMName $HostName
+Start-VM -VMName $VMName
 
-# Finish OOBE setup.
-vmconnect.exe localhost $HostName
+# Complete the OOBE setup.
 
-# Rename the host.
-Invoke-Command -VMName $HostName -Credential $Credential -ScriptBlock { Rename-Computer -NewName $using:HostName -Restart -Force }
-
-# Get the host name.
-Invoke-Command -VMName $HostName -Credential $Credential -ScriptBlock { hostname }
-
-# Get all virtual machine IP addresses.
-# Virtual machines must be running and must have guest services.
-Get-VM -VMName $HostName |
-Select-Object -ExpandProperty "NetworkAdapters" |
-Select-Object -Property "VMName", "IPAddresses"
+# Get the virtual machine.
+Get-VM -VMName $VMName
 
 # Stop the virtual machine gracefully.
-Stop-VM -VMName $HostName
-
-# Stop the virtual machine forcefully.
-Stop-VM -VMName $HostName -Force
+Stop-VM -VMName $VMName
 
 # Checkpoint the virtual machine.
-Checkpoint-VM -VMName $HostName -SnapshotName "BASE"
+Checkpoint-VM -VMName $VMName -SnapshotName "BASE"
+
+# Stop the virtual machine forcefully.
+Stop-VM -VMName $VMName -Force
 
 # Remove the virtual machine.
-Remove-VM -VMName $HostName -Force
+Remove-VM -VMName $VMName -Force
 
 # Remove the virtual hard disk.
 Remove-Item -Path $VhdPath -Force
