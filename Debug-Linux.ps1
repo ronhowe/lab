@@ -14,3 +14,6 @@ Test-NetConnection -ComputerName $ComputerName -Port 22
 # Remote witih SSH
 # ssh administrator@linux-vm
 ssh "$Username@$ComputerName"
+
+# Use Secure Copy Program (scp) from WSL to copy file.
+scp ./OnboardingScript.sh administrator@lnx-vm:/home/administrator

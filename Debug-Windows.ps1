@@ -36,3 +36,18 @@ slmgr -dlv
 slmgr -rearm
 Restart-Computer
 slmgr -dli
+
+
+Set-TimeZone -Name "Eastern Standard Time"
+Set-TimeZone -Name "Coordinated Universal Time"
+
+# https://blog.jourdant.me/post/3-ways-to-download-files-with-powershell
+
+$url = "https://github.com/PowerShell/PowerShell/releases/download/v7.2.4/PowerShell-7.2.4-win-x64.msi"
+$output = "~\Downloads\PowerShell-7.2.4-win-x64.msi"
+Import-Module -Name "BitsTransfer"
+Start-BitsTransfer -Source $url -Destination $output -verbose
+Start-BitsTransfer -Source $url -Destination $output -Asynchronous
+
+Set-Location -Path "~\Downloads"
+msiexec.exe /package PowerShell-7.2.4-win-x64.msi /quiet ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL=1 ENABLE_PSREMOTING=1 REGISTER_MANIFEST=1 USE_MU=1 ENABLE_MU=1

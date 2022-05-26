@@ -10,6 +10,7 @@ Import-Module -Name "HostsFile"
 # Set frequently used variables.
 $Credential = Get-Credential -Message "Enter Administrator Credential"
 $VMName = Read-Host -Prompt "Enter Virtual Machine Name"
+
 $VhdPath = "D:\Hyper-V\Virtual Hard Disks\$VMName.vhdx"
 $IsoPath = "C:\Users\ronhowe\Downloads\LAB\Windows Server 2022.iso"
 $SwitchName = "Default Switch"
@@ -55,6 +56,8 @@ Invoke-Command -VMName $VMName -Credential $Credential -ScriptBlock { Rename-Com
 # Get the virtual machine name.
 Invoke-Command -VMName $VMName -Credential $Credential -ScriptBlock { hostname }
 
+Checkpoint-VM -VMName $VMName -SnapshotName "BASE"
+
 # Stop the virtual machine.
 Stop-VM -VMName $VMName -Force
 
@@ -66,7 +69,7 @@ Remove-Item -Path $VhdPath -Force
 
 # Enable guest services.  Linux only.  Must run locally.
 # https://pitstop.manageengine.com/portal/en/kb/articles/how-to-get-the-ip-address-for-hyper-v-linux-vm-in-apm
-# sudo apt-get install linux-azure
+# sudo apt-get install linux-azure -y
 
 # Get all virtual machine IP addresses.  Virtual machines must be running.
 Get-VM |
@@ -78,12 +81,13 @@ Select-Object -Property "VMName", "IPAddresses"
 Get-VMNetworkAdapter -VMName $VMName |
 Select-Object -ExpandProperty "IPAddresses" |
 Where-Object { $_.Length -lt 24 }
-
-# Get hosts file entry.
-Get-HostEntry -HostName $VMName -Section "linux"
+$IpAddress
 
 # Remove hosts file entry.
 Remove-HostEntry -HostName $VMName -Section "linux"
 
 # Add hosts file entry.
 Add-HostEntry -HostName $VMName -IpAddress $IpAddress -Section "linux" | Out-Null
+
+# Get hosts file entry.
+Get-HostEntry -HostName $VMName -Section "linux"
