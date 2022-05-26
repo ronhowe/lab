@@ -1,11 +1,11 @@
-#requires -RunAsAdministrator
-
 # Import module(s).
-Import-Module -Name "HostsFile"
 Import-Module -Name "Hyper-V"
 
 # Get the administrator credential.
 $Credential = Get-Credential -Message "Enter Administrator Credential" -UserName "administrator"
+
+# Get the username.
+$UserName = $Credential.UserName
 
 # Get the host name.
 $HostName = Read-Host -Prompt "Enter Host Name"
@@ -14,7 +14,7 @@ $HostName = Read-Host -Prompt "Enter Host Name"
 $IpAddress = Read-Host "Enter IP Address"
 
 # Get the SSH destination.
-$Destination = "$($Credential.UserName)@$IpAddress"
+$Destination = "$UserName@$IpAddress"
 
 # Get the current time.
 ssh $Destination date
@@ -27,14 +27,25 @@ ssh -t $Destination 'sudo apt-get install linux-azure -y'
 ssh -t $Destination 'sudo reboot'
 
 # Get IP address.  Virtual machine must be running.
-[System.Net.IPAddress]$IpAddress =
-Get-VMNetworkAdapter -VMName $HostName |
-Select-Object -ExpandProperty "IPAddresses" |
-Where-Object { $_.Length -lt 24 }
-$IpAddress
+function Get-VmIpAddressAddress {
+    param(
+        [string]
+        $VMName
+    )
+    [System.Net.IPAddress]$IpAddress =
+    Get-VMNetworkAdapter -VMName $HostName |
+    Select-Object -ExpandProperty "IPAddresses" |
+    Where-Object { $_.Length -lt 24 }
+    return $IpAddress.IPAddressToString
+}
+
+$IpAddress = Get-VmIpAddressAddress -VMName $HostName
 
 # Get the SSH destination.
-$Destination = "$($Credential.UserName)@$($IpAddress.IPAddressToString)"
+$Destination = "$UserName@$IpAddress"
+
+# SSH to host.
+ssh $Destination
 
 # Update packages.
 ssh -t $Destination 'sudo apt update -y'
@@ -57,24 +68,6 @@ sudo systemctl restart ssh
 # Remove client SSH keys.
 ssh-keygen -R LNX-VM
 
-# Remote with SSH.
-ssh administrator@$HostName
-
-# Get all virtual machine IP addresses.
-# Virtual machines must be running and must have guest services.
-Get-VM -VMName $HostName |
-Select-Object -ExpandProperty "NetworkAdapters" |
-Select-Object -Property "VMName", "IPAddresses"
-
-# Get hosts file entry.
-Get-HostEntry -HostName $HostName -Section "linux"
-
-# Remove hosts file entry.
-Remove-HostEntry -HostName $HostName -Section "linux"
-
-# Add hosts file entry.
-Add-HostEntry -HostName $HostName -IpAddress $IpAddress -Section "linux" | Out-Null
-
 # Test SSH to the host.
 Test-NetConnection -ComputerName $HostName -Port 22
 
@@ -88,3 +81,12 @@ sudo timedatectl set-timezone Etc/UTC
 
 # Use Secure Copy Program (scp) from WSL to copy file to the host.
 scp ./OnboardingScript.sh administrator@lnx-vm:/home/administrator
+
+# https://docs.microsoft.com/en-us/powershell/scripting/learn/remoting/ssh-remoting-in-powershell-core?view=powershell-7.2
+sudo find -name "pwsh"
+
+Subsystem powershell /snap/bin/pwsh -sshs -NoLogo
+
+sudo systemctl restart sshd.service
+
+$Session = New-PSSession -HostName 172.26.114.202 -UserName administrator
