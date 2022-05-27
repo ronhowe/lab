@@ -12,6 +12,24 @@ Configuration HostConfiguration {
     Import-DscResource -ModuleName "xHyper-V"
 
     Node "localhost" {
+        # WindowsFeature "HyperV" {
+        #     Ensure = "Present"
+        #     Name   = "Hyper-V"
+        # }
+        # xVMSwitch "InternalSwitch" {
+        #     DependsOn = "[WindowsFeature]HyperV"
+        #     Ensure    = "Present"
+        #     Name      = "Internal Switch"
+        #     Type      = "Internal"
+        # }
+        # IPAddress "NewIPv4Address"
+        # {
+        #     AddressFamily  = "IPV4"
+        #     DependsOn      = "[xVMSwitch]InternalSwitch"
+        #     InterfaceAlias = "vEthernet (Internal Switch)"
+        #     IPAddress      = "192.168.0.1"
+        # }
+        # TODO DSC Support for NAT rule.
         @("DC-VM", "SQL-VM", "USER-VM", "WEB-VM") | ForEach-Object {
             xVHD "xVHD$_" {
                 Ensure           = $Ensure
