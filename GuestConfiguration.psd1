@@ -6,7 +6,9 @@
             CertificateFile      = "$env:TEMP\DscPublicKey.cer"
             CertificateId        = "EAC69C0CDF518426D6342A0673EAA22C9A5D2860"
             ConfigurationMode    = "ApplyAndAutoCorrect"
+            DnsIpAddress         = "192.168.1.1"
             DomainName           = "LAB.LOCAL"
+            GatewayIpAddress     = "192.168.0.1"
             NodeName             = "*"
             RebootNodeIfNeeded   = $true
             RestartCount         = 3
@@ -42,6 +44,7 @@ WMI-RPCSS-In-TCP
         },
         @{
             DatabasePath                = "C:\Windows\NTDS"
+            IpAddress                   = "192.168.0.10/24"
             LogPath                     = "C:\Windows\NTDS"
             NodeName                    = "DC-VM"
             Sku                         = "Desktop"
@@ -53,6 +56,7 @@ WMI-RPCSS-In-TCP
         };
         @{
             Features            = "SQLENGINE"
+            IpAddress           = "192.168.0.20/24"
             InstanceName        = "MSSQLSERVER"
             NodeName            = "SQL-VM"
             Sku                 = "Desktop"
@@ -61,12 +65,14 @@ WMI-RPCSS-In-TCP
         };
         @{
             NodeName       = "USER-VM"
+            IpAddress      = "192.168.0.40/24"
             Sku            = "Desktop"
             TestFolderPath = "C:\test"
         };
         @{
-            NodeName = "WEB-VM"
-            Sku      = "Desktop"
+            NodeName  = "WEB-VM"
+            IpAddress = "192.168.0.30/24"
+            Sku       = "Desktop"
         };
     );
 }

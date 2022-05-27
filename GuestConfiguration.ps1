@@ -16,48 +16,6 @@ Configuration GuestConfiguration {
     Import-DscResource -ModuleName "SqlServerDsc"
 
     #region Helpers
-    function Get-NodeGatewayIpAddress {
-        return Get-NetIPConfiguration -InterfaceAlias "vEthernet (Default Switch)" | Select-Object -ExpandProperty "IPv4Address" | Select-Object -ExpandProperty "IPAddress"
-    }
-    
-    function Get-NodeIpAddress {
-        param(
-            [Parameter(Mandatory = $true)]
-            [ValidateNotNullorEmpty()]
-            [string]
-            $NodeName,
-    
-            [Parameter(Mandatory = $false)]
-            [int]
-            $Subnet
-        )
-    
-        $IpAddress = $(Get-NodeGatewayIpAddress).Split(".")
-
-        $IpAddress[-1] = switch ($NodeName) {
-            "DC-VM" {
-                10
-            }
-            "SQL-VM" {
-                20
-            }
-            "USER-VM" {
-                40
-            }
-            "WEB-VM" {
-                30
-            }
-        }
-
-        if ($Subnet) {
-            return "{0}/{1}" -f ($IpAddress -join "."), $Subnet
-        }
-        else {
-            return $IpAddress -join "."
-        }
-    }
-    #endregion Helpers
-
     $DomainCredential = New-Object System.Management.Automation.PSCredential ($("{0}\{1}" -f $Node.DomainName, $Credential.UserName), $Credential.Password)
 
     Node $AllNodes.NodeName {
@@ -84,10 +42,10 @@ Configuration GuestConfiguration {
         IPAddress "SetIPAddress" {
             AddressFamily  = "IPV4"
             InterfaceAlias = "Ethernet"
-            IPAddress      = Get-NodeIpAddress -NodeName $Node.NodeName -Subnet $Node.Subnet
+            IPAddress      = $Node.IpAddress
         }
         DefaultGatewayAddress "SetDefaultGatewayIpAddress" {
-            Address        = Get-NodeGatewayIpAddress
+            Address        = $Node.GatewayIpAddress
             AddressFamily  = "IPv4"
             InterfaceAlias = "Ethernet"
         }
@@ -96,7 +54,7 @@ Configuration GuestConfiguration {
                 Name = $Node.NodeName
             }
             DnsServerAddress "SetDnsServerIpAddress" {
-                Address        = Get-NodeGatewayIpAddress
+                Address        = $Node.DnsIpAddress
                 AddressFamily  = "IPv4"
                 InterfaceAlias = "Ethernet"
                 Validate       = $false
@@ -104,7 +62,8 @@ Configuration GuestConfiguration {
         }
         else {
             DnsServerAddress "SetDnsServerIpAddress" {
-                Address        = $(Get-NodeIpAddress -NodeName "DC-VM"),$(Get-NodeGatewayIpAddress)
+                # TODO - Remove the secondary DNS.
+                Address        = "192.168.0.10", $Node.DnsIpAddress
                 AddressFamily  = "IPv4"
                 InterfaceAlias = "Ethernet"
                 Validate       = $false

@@ -29,7 +29,7 @@ Configuration HostConfiguration {
                 Name                        = $_
                 ProcessorCount              = $Node.ProcessorCount
                 RestartIfNeeded             = $true
-                SwitchName                  = "Default Switch"
+                SwitchName                  = "Internal Switch"
                 VhdPath                     = Join-Path -Path $Node.VirtualHardDisksPath -ChildPath "$_.vhdx"
             }
             if ($Ensure -eq "Present") {
