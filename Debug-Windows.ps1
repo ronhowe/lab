@@ -13,20 +13,35 @@ Invoke-Command -VMName $HostName -Credential $Credential -ScriptBlock { hostname
 # Rename the host.
 Invoke-Command -VMName $HostName -Credential $Credential -ScriptBlock { Rename-Computer -NewName $using:HostName -Restart -Force }
 
+# Get the IP address.
+$IpAddress = "192.168.0.2" # Standardized static IP.
+
+# Set a static IP address.
+$ScriptBlock = {
+    $InterfaceIndex = $(Get-NetAdapter -Name "Ethernet").ifIndex
+    Remove-NetIPAddress -InterfaceIndex $InterfaceIndex -Confirm:$false
+    Remove-NetRoute -InterfaceIndex $InterfaceIndex -Confirm:$false
+    New-NetIPAddress -IPAddress $using:IpAddress -AddressFamily IPv4 -PrefixLength "24" -InterfaceIndex $InterfaceIndex -DefaultGateway "192.168.0.1" | Out-Null
+    Set-DnsClientServerAddress -InterfaceIndex $InterfaceIndex -ServerAddresses ("192.168.1.1") | Out-Null
+    Start-Sleep -Seconds 5
+    Test-NetConnection
+}
+Invoke-Command -VMName $HostName -Credential $Credential -ScriptBlock $ScriptBlock
+
 # Test WinRM to the host.
 Test-NetConnection -ComputerName $HostName -Port 5985 -WarningAction SilentlyContinue
 
-# Create a remote session.
+# Create a PowerShell session over WinRM.
 $Session = New-PSSession -ComputerName $HostName -Credential $Credential
 
-# Check the remote session.
-$Session
+# Check the session.
+$Session | Get-PSSession
 
-# Enter the remote session.
+# Enter the session.
 $Session | Enter-PSSession
 
-# Close the remote session.
-Get-PSSession | Remove-PSSession
+# Close the session.
+$Session | Remove-PSSession
 
 # Set Windows Firewall to allow inbound PING (ICMP).
 $ScriptBlock = {

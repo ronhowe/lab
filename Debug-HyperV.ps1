@@ -20,8 +20,8 @@ $VMName = Read-Host -Prompt "Enter Virtual Machine Name"
 # Get the virtual hard drive path.
 $VhdPath = "D:\Hyper-V\Virtual Hard Disks\$VMName.vhdx"
 
-# Get the virtual switch name.
-$SwitchName = "Default Switch"
+# Set the virtual switch name.
+$SwitchName = "Internal Switch"
 
 # Create the virtual hard disk.
 New-VHD -Path $VhdPath -SizeBytes 127GB -Dynamic
