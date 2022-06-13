@@ -14,15 +14,22 @@ Invoke-Command -VMName $HostName -Credential $Credential -ScriptBlock { hostname
 Invoke-Command -VMName $HostName -Credential $Credential -ScriptBlock { Rename-Computer -NewName $using:HostName -Restart -Force }
 
 # Get the IP address.
-$IpAddress = "192.168.0.2" # Standardized static IP.
+$IpAddress = Read-Host -Prompt "Enter IP Address" # 192.168.0.10
+
+# Get the Gateway IP address.
+$GatewayIpAddress = Read-Host -Prompt "Enter Gateway IP Address" # 192.168.0.1
+
+# Get the DNS IP addresses.
+$PrimaryDnsIpAddress = Read-Host -Prompt "Enter Primary DNS IP Address" # 192.168.0.10
+$SecondaryDnsIpAddress = Read-Host -Prompt "Enter Secondary DNS IP Address" # 192.168.1.1
 
 # Set a static IP address.
 $ScriptBlock = {
     $InterfaceIndex = $(Get-NetAdapter -Name "Ethernet").ifIndex
     Remove-NetIPAddress -InterfaceIndex $InterfaceIndex -Confirm:$false
     Remove-NetRoute -InterfaceIndex $InterfaceIndex -Confirm:$false
-    New-NetIPAddress -IPAddress $using:IpAddress -AddressFamily IPv4 -PrefixLength "24" -InterfaceIndex $InterfaceIndex -DefaultGateway "192.168.0.1" | Out-Null
-    Set-DnsClientServerAddress -InterfaceIndex $InterfaceIndex -ServerAddresses ("192.168.1.1") | Out-Null
+    New-NetIPAddress -IPAddress $using:IpAddress -AddressFamily IPv4 -PrefixLength "24" -InterfaceIndex $InterfaceIndex -DefaultGateway $using:GatewayIpAddress | Out-Null
+    Set-DnsClientServerAddress -InterfaceIndex $InterfaceIndex -ServerAddresses ($using:PrimaryDnsIpAddress, $using:SecondaryDnsIpAddress) | Out-Null
     Start-Sleep -Seconds 5
     Test-NetConnection
 }
